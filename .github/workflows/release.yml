@@ -1,0 +1,58 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*' # vから始まるタグが作成されたときに実行
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-tk
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+      
+      - name: Extract version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+      
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --onefile --name menu_command launcher.py
+          chmod +x dist/menu_command
+          cd dist && tar -czvf menu_command-${{ env.VERSION }}-linux.tar.gz menu_command
+      
+      - name: Get Release Notes
+        id: release_notes
+        run: |
+          NOTES=$(cat RELEASE_NOTES.md)
+          # GitHub Actionsの環境変数に設定するために改行を%0Aに置き換える
+          NOTES="${NOTES//'%'/'%25'}"
+          NOTES="${NOTES//$'\n'/'%0A'}"
+          NOTES="${NOTES//$'\r'/'%0D'}"
+          echo "NOTES=${NOTES}" >> $GITHUB_ENV
+      
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ env.VERSION }}
+          name: ${{ env.VERSION }} リリース
+          body: ${{ env.NOTES }}
+          draft: false
+          prerelease: ${{ contains(env.VERSION, 'alpha') || contains(env.VERSION, 'beta') || contains(env.VERSION, 'rc') }}
+          files: |
+            dist/menu_command-${{ env.VERSION }}-linux.tar.gz 

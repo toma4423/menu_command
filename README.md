@@ -61,6 +61,26 @@ python3 launcher.py
 }
 ```
 
+## 開発者向け情報
+
+### リポジトリ構成
+
+- `launcher.py` - メインプログラム
+- `config.json` - 設定ファイル
+- `README.md` - 使用方法の説明
+- `RELEASE_NOTES.md` - リリースノート
+- `.github/workflows/` - GitHub Actions用ワークフローファイル
+
+### 自動リリース
+
+このリポジトリはGitHub Actionsを使用した自動リリース機能を実装しています。新しいバージョンをリリースするには：
+
+1. コードを変更し、コミットする
+2. タグを作成する: `git tag -a vX.X.X -m "バージョンX.X.Xをリリース"`
+3. タグをプッシュする: `git push origin vX.X.X`
+
+GitHub Actionsが自動的に実行ファイルをビルドし、リリースを作成します。詳細は `GITHUB_RELEASE_INSTRUCTIONS.md` を参照してください。
+
 ## セキュリティに関する注意
 
 - コマンドはすべてsudo権限で実行されるため、安全なコマンドのみを登録してください
