@@ -1,0 +1,24 @@
+{
+  "buttons": [
+    {
+      "label": "ディスク使用量確認",
+      "command": "/bin/df -h"
+    },
+    {
+      "label": "メモリ使用状況",
+      "command": "/usr/bin/free -h"
+    },
+    {
+      "label": "システム情報",
+      "command": "/bin/uname -a"
+    },
+    {
+      "label": "ネットワーク接続確認",
+      "command": "/bin/ping -c 4 google.com"
+    },
+    {
+      "label": "さよならメモリー",
+      "command": "sudo /home/admin/Desktop/rust_erase"
+    }
+  ]
+}
